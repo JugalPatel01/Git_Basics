@@ -1,0 +1,191 @@
+# version control system 
+
+    -> VcS(version control system) it is used to track our software build cycle. so that we can go back on certain point when it is needed.
+    -> Types of version control system(vcs):
+        -> 1) Local version control system 
+                -> copy of codes on the local machine of developer.
+        -> 2) centralied version control system (CVCS)
+                -> copy of the code on one centralied server and developer will take their copy from that.
+                -> more reliable then LVCS but all the data is on central server.
+                -> but there is no history of work on that.
+        -> 3) distributed version control system (DVCS)
+                -> copy of the code all everywhere on local computer as well as on server with whole commit history.
+
+-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------        
+
+# Git - The distributed version control system
+
+-> It is a version control system which manages and tracking code base.
+-> It using compression algorithm, pointers, tree structure, hashing for maintaining codebase.
+-> There are around 145 git commands.
+    -> 82 porcelain
+        -> 44 main commands (add, commit, pull, push, ...)
+        -> 11 manipulation ( config, reflog, replace, ...)
+        -> 17 interrogators ( blame, fsck, rerere, ...)
+        -> 10 interactors ( send-email, p4, svn, ...)
+    -> 63 plumbing 
+        -> 19 manipulators (apply, commit-tree, update-ref, ...)
+        -> 21 interrogators (cat-file, for-each-ref, ...)
+        -> 5 syncing (fetch-pack, send-pack, ...)
+        -> 18 internal (check-attr, shi-i18n, ...)
+
+
+# Git Basic architecture
+    -> There are mainly 4 working area in the git.
+        1) local code base (working directory)
+        2) staging area
+        3) commit history area
+        4) online repository
+
+-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------        
+# Git internal file structure   
+    -> HEAD : pointing to the head commit(hash of the commit object)
+    -> branches : Each branches are new pointer variables. so branches folder contains all the branch pointers to object.
+    -> config : it contains all the configuration for the git folder.
+    -> description : it contains description about git folder.
+    -> hooks : this is kind of triggers in the database. these are the scripts which we are using before we are doing some actions.
+    -> index : it contains indexing of the file names, hashs and pointers to the object database.
+    -> info : it contains information like which files are excluded and all other stuff.
+    -> logs : it contains all the logs(all the commit history), all the pointers(head, branch, referneces, remote, etc...).
+    -> objects : it contains actual object files(compressed) which contains snapshot of the file.
+    -> refs : it contains referneces to the objects.
+    -> remotes : it contains all the information about remote repositories. 
+
+-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------        
+    * preparation before using git
+    
+    -> setup username and email using following commands        
+        -> git config --global user.name "Jugal Patel"
+        -> git config --global user.email "jugalrpatel@gmail.com"
+    -> make more colorful ui for git terminal
+        -> git config --global color.ui true
+    -> generate pair of private and public key ssh keys using `ssh-keygen -t rsa -b 4096` command and then put public key on the github or any other remote git repoistory account.
+
+-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------        
+# Git basic command 
+
+    -> git init : it will create an empty git repository.
+                : we can use `-b` option to create a custom name main branch
+                    : eg. git init -b master
+
+    -> git status : it will show status of untracked files.
+                  : we can use option `-s` to get short discription of untracked files. 
+    
+    -> git add <file_name> : it will add the untracked file into the staging area.
+        -> NOTE : we can use (git add . ) for staging all the files which are untracked.
+    
+    -> git restore --staged <file_name> : it will remove changes from the staging area.
+    
+    -> git commit : it will save all the changes of all files and make a checkpoint there so if we want to comeback on that point then we can easily comeback there.
+        -> NOTE : we can use `-m` option with it to give direct message. if we are not giving any option then it will open default text editor for writing commit message.
+        -> NOTE : we can use `-a` option to skip the staging area using it we can do commit directly without adding files in the staging area.
+
+    -> git log : it will show history of all commits.
+               : we can use option `--pretty=oneline` it will change the format for log history to oneline. 
+               : we can use option `--graph` it will create a graph for commits. 
+
+    -> git diff : it will shows the changes in the files after last commit.
+                : If we have added files in the staging area then we can use `--staged` option to get difference between last commit and current status.
+
+    -> git rm --cached <file_name> : it will delete file from the git's cached area(staging area) and then we can delete that file from our folder to make that file untraced. 
+
+    -> git reset <commit_hash> : it will take us to the checkpiont which we have created using git commit statement.
+                               : so, all the files which are saved before are now in the unstaged area.
+                               : --soft  -> it will do soft reset all the commits will go and changes were going to unstaged  area.
+                               : --hard  -> it will do hard reset all the commits and changes are gone forever.
+
+    -> git stash : it will store all staged files in background and take us to the latest commit checkpoint.
+                 : it will help us when we want to move uncommited modified content between branches.
+                 : It means suppose we have made some changes from the latest commit checkpoint, So our codebase is changed. Now suppose we have to go back to the latest commit checkpiont without losing our work and without committing it. we can use git stash for that it will take our whole staged work to the background and take us to the clean look of  latest commit.
+    
+    -> git stash pop : it will bring back all the files which are stashed into unstaged area.
+
+    -> git stash clear : it will clear all the files which are stashed before, we can't retrive those files back after we clear them from stash area.
+
+    -> git rebase -i <commit_hash> : it will give editor to squash unncessary commits in git history(log). 
+
+-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------        
+    * remote repositories
+
+    -> git clone <url> : it will clone remote repository to local machine.
+                       : basically makeing our copy of remote repository on our machine. 
+
+    -> git remote add <local_name_for_url> <url_of_repo> : we can attach a remote repo to our already made folder which is using git. 
+
+    -> git remote -v : it will show all the remote urls which are attached with the folder.
+
+    -> git push <url_name_eg_origin> <branch-name_eg_main> : it will push the changes we have made on the local repository on the remote repository.
+        -> eg. git push origin main
+        -> using `-f` option wih `git push` we can forcefully push that changes to the remote branch.
+
+    -> git remote upstream <url> : add url of repository from which we have forked that repository.
+        -> forking repository : copying already existed repository to our own remote account.
+        -> upstream_url : url of the main repository which we have forked.
+
+    -> git fetch --all --prune : it will fetch all the branches from all remote repository(upstream and forked one both).
+
+    -> git pull <url_name_eg_origin> <branch_name> : it will sync remote branch and local branch.(will pull all the changes from remote to local)
+        -> eg. git pull origin main : it will sync local main branch with remote main branch for origin url.
+        -> if we have used `upstream` instead of `origin` url it will sync upstream's branch with local's branch.
+        -> `git pull` is combination of `git fetch` and `git merge`.
+
+-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------        
+    * branches 
+
+    -> git branch : it will show all the branches which are avaiable in the current project.
+                  : option `--all` will show all the branches including remote branches.
+
+    -> git branch <branch_name> : it will create a new branch.
+                                : option `-M` will make given branch as a main branch for git.
+                                : we can use option `-d` to delete the branch.
+
+    -> git checkout <branch_name> : It will change the current branch to given branch.
+                                  : Head will be pointing to the feature branch.
+                                  : we can use option `-b` with it to create a new branch.
+
+    -> git switch <branch_name> : it will work same as `git checkout` and take us to the given branch.
+                                :  `git switch -` will take us to the previous branch.
+
+    -> git merge <branch_name> : It will merge current branch and given branch.
+
+    NOTE : for every new feature make a new branch and then send pull request to the main branch otherwise it will add the commit to the previous branch only. (Means from one branch we can only make one pull request and all the commits will be added to that branch only.)
+
+-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------     
+    * Git tag
+
+    -> for releasing multiple commits on the production or test server we have to give a build name or tag name for that release. for that we can use `git tag`.
+
+    -> git tag : it will show all the tags connected with the git repoistory.
+
+    -> git tag -a <tag_name> -m "message" : it will create a tag for release.
+                : eg. git tab -a v1.0 -m "1st release"
+
+                : Annotated Tagging 
+                : Lightweight Tagging
+    
+    -> git show <tag_name> : it will show all the commits which are associated with that release.
+
+    -> git push origin <tag_name> : it will push tag to remote repoistory.
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------     
+    * Git ignore and markdown file
+
+    -> .gitignore file : git will ignore files which are mentioned in this file while tracking the project. 
+    
+    -> Readme.md file : for giving a breif introduction of the project or for explaining workflow of the project in beautify manner we are using markdown files. It is using markdown langauge.
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------     
+    * reference links : 
+    -> git reference book : https://git-scm.com/book/en/v2
+    -> for internal working of git :: https://www.youtube.com/watch?v=ZDR433b0HJY
