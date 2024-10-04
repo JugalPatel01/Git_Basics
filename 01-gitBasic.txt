@@ -49,7 +49,7 @@
     -> index : it contains indexing of the file names, hashs and pointers to the object database.
     -> info : it contains information like which files are excluded and all other stuff.
     -> logs : it contains all the logs(all the commit history), all the pointers(head, branch, referneces, remote, etc...).
-    -> objects : it contains actual object files(compressed) which contains snapshot of the file.
+    -> objects : it contains actual object files(compressed) which contains snapshot of the file content, directory listing and commit metadata(who you are , on what data you made commit, what is commit message, etc.). 
     -> refs : it contains referneces to the objects.
     -> remotes : it contains all the information about remote repositories. 
 
@@ -77,16 +77,25 @@
     
     -> git add <file_name> : it will add the untracked file into the staging area.
         -> NOTE : we can use (git add . ) for staging all the files which are untracked.
+        -> we can use option `-p` with git add to add stage sections of a file in staging area.(it will ask for each patches whether we have to include it or not in staging area). 
     
     -> git restore --staged <file_name> : it will remove changes from the staging area.
     
     -> git commit : it will save all the changes of all files and make a checkpoint there so if we want to comeback on that point then we can easily comeback there.
+        -> commit contains tree-hash, parent-hash, authors data, commiters data and commit message.
         -> NOTE : we can use `-m` option with it to give direct message. if we are not giving any option then it will open default text editor for writing commit message.
         -> NOTE : we can use `-a` option to skip the staging area using it we can do commit directly without adding files in the staging area.
 
     -> git log : it will show history of all commits.
                : we can use option `--pretty=oneline` it will change the format for log history to oneline. 
                : we can use option `--graph` it will create a graph for commits. 
+                   : eg. git log --oneline --graph --all --decorate
+                   : we can make alias also for that 
+                        : git config --global alias.wowshow "log --oneline --graph --decorate" 
+               : we can do graph operations on the git log
+                    : eg. git log branchA ^branchB              # ----> it will show only those commits which are reachable by branchA but not bray branchB.
+               : we can use option `-p` for getting all the patches in the log history.
+               : we can use option `--stat` for getting information in log for only those files which are modified, created or deleted in git commit. 
 
     -> git diff : it will shows the changes in the files after last commit.
                 : If we have added files in the staging area then we can use `--staged` option to get difference between last commit and current status.
@@ -113,7 +122,7 @@
     * remote repositories
 
     -> git clone <url> : it will clone remote repository to local machine.
-                       : basically makeing our copy of remote repository on our machine. 
+                       : basically making our own copy of remote repository on our machine. 
 
     -> git remote add <local_name_for_url> <url_of_repo> : we can attach a remote repo to our already made folder which is using git. 
 
@@ -127,7 +136,9 @@
         -> forking repository : copying already existed repository to our own remote account.
         -> upstream_url : url of the main repository which we have forked.
 
-    -> git fetch --all --prune : it will fetch all the branches from all remote repository(upstream and forked one both).
+    -> git fetch : it will fetch all the data from remote repository to local repository.
+                 : we can use option '--all --prune' will fetch all the branches from all remote repositories( upstream and forked both).
+                    : eg. :  git fetch --all --prune
 
     -> git pull <url_name_eg_origin> <branch_name> : it will sync remote branch and local branch.(will pull all the changes from remote to local)
         -> eg. git pull origin main : it will sync local main branch with remote main branch for origin url.
@@ -138,6 +149,7 @@
 ------------------------------------------------------------------------------------------------------------------------------------        
     * branches 
 
+    -> Branches are the pointers to some commit in git history(git database).
     -> git branch : it will show all the branches which are avaiable in the current project.
                   : option `--all` will show all the branches including remote branches.
 
@@ -153,6 +165,31 @@
                                 :  `git switch -` will take us to the previous branch.
 
     -> git merge <branch_name> : It will merge current branch and given branch.
+                               : There are two types of merges
+                                1) fast-forward merge : when main branch(where we want to merge other branch) is directly reachable as parents to the merging branch(which we have to merge with main branch).
+                                                      : It will main branch(where we want to merge other branch) will directly pointing to the pointer of a merging branch(which we have to merge).
+                                                      : eg. 
+                                                    (main)               (merging branch)
+                                                       * ---- ed3... ---- *
+
+                                                       after merge
+                                                                         (merging branch, main)
+                                                       * ---- ed3... ---- *
+
+                                2) non fast-forward merge : when main branch(where we want to merge other branch) is not directly reachable as a parent  from merging branch(which we have to merge with main branch).
+                                                          : it will kind of find the difference between those two commits and then merge them(copying content which is not there) and make new node in git object history structure(new commit) and pointing main branch to that node(commit). (if some files which are changed on both commits then it will give merge conflict. that we have to manually merge those conflicts.)  
+                                                      : eg. 
+                                                                        (main)
+                                                       * ---- ed3... ---- *
+                                                       | ---- 36d... ---- *
+                                                                         (merging branch)
+
+                                                       after merge
+                                                                       
+                                                       * ---- ed3... ---- * ----|
+                                                                                | --- 35a... (main)
+                                                       | ---- 36d... ---- * ----|
+                                                                         (merging branch)
 
     NOTE : for every new feature make a new branch and then send pull request to the main branch otherwise it will add the commit to the previous branch only. (Means from one branch we can only make one pull request and all the commits will be added to that branch only.)
 
