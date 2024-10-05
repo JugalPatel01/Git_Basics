@@ -17,7 +17,7 @@
 # Git - The distributed version control system
 
 -> It is a version control system which manages and tracking code base.
--> It using compression algorithm, pointers, tree structure, hashing for maintaining codebase.
+-> It using compression algorithm, pointers, merkle tree structure, hashing for maintaining codebase.
 -> There are around 145 git commands.
     -> 82 porcelain
         -> 44 main commands (add, commit, pull, push, ...)
@@ -70,9 +70,11 @@
                                            : git config --global alias.staash 'stash --all'
     
     -> run scripts using git commands : use `!` to run script eg.
-                                      : git config --global alias.runsc !run_this.sh  
+                                      : git config --global alias.runsc !run_this.sh
 
-    
+    -> Enable Reuse Recorded Resolution : git config --global rerere.enabled true
+                                        : If there is any merge conflict and if rerere is enabled then git will remember that conflict, How we solved that conflict. and if we encounter that conflict again then git will automatically fix it.
+
 -------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------        
 # Git basic command 
@@ -94,6 +96,7 @@
         -> commit contains tree-hash, parent-hash, authors data, commiters data and commit message.
         -> NOTE : we can use `-m` option with it to give direct message. if we are not giving any option then it will open default text editor for writing commit message.
         -> NOTE : we can use `-a` option to skip the staging area using it we can do commit directly without adding files in the staging area.
+        -> We can use `git cat-file -p HEAD` to see what commit contains(structure).
 
     -> git log : it will show history of all commits.
                : we can use option `--pretty=oneline` it will change the format for log history to oneline. 
@@ -105,10 +108,13 @@
                     : eg. git log branchA ^branchB              # ----> it will show only those commits which are reachable by branchA but not bray branchB.
                : we can use option `-p` for getting all the patches in the log history.
                : we can use option `--stat` for getting information in log for only those files which are modified, created or deleted in git commit. 
+    
+    -> git reflog : it will show entire history of references.
 
-    -> git diff : it will shows the changes in the files after last commit.
+    -> git diff : it will shows the changes in the files after last commit line by line.
                 : If we have added files in the staging area then we can use `--staged` option to get difference between last commit and current status.
-
+                : we can use option `--word-diff` to get difference by words instead of lines.
+ 
     -> git rm --cached <file_name> : it will delete file from the git's cached area(staging area) and then we can delete that file from our folder to make that file untraced. 
 
     -> git reset <commit_hash> : it will take us to the checkpiont which we have created using git commit statement.
@@ -127,6 +133,17 @@
     -> git clean -f : it will delete untracked files(added in the working directory but not indexed(added in the staging area)) in working directory.
 
     -> git rebase -i <commit_hash> : it will give editor to squash unncessary commits in git history(log). 
+
+    -> git grep "string-for-serach" : it will search that string in the entire git directory.
+
+    -> git blame -L <range> file_path : it will show who added which stuff in that particular range.
+                                      : eg. git blame -L 14,50 ./01-gitBasic.txt
+                                      : we can use -L with `git log` to get similar kind of functionality.
+                                      : we can use option `-w` to remove whitespaces.
+                                      : we can use option `-C -C -C` to see who created lines even after if some has moved those lines in some other commit.
+                                            : first `-C` for detect lines moved for copied in the same commit 
+                                            : second `-C` for the commit that created the file
+                                            : second `-C` for any commit at all
 
 -------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------        
@@ -224,6 +241,45 @@
 
 
 -------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------    
+    * git hooks
+
+    -> There are total about 28 hooks there in the git.  
+        1) commit stuff
+            a) pre-commit
+            b) prepare-commit-message
+            c) commit-msg
+            d) post-commit
+        2) Rewritting stuff
+            a) pre-rebase
+            b) post-rewrite
+        3) merging stuff
+            a) post-merge
+            b) pre-merge-commit
+        4) switching/pushing stuff
+            a) post-checkout
+            b) refernece-transaction
+            c) pre-push 
+        5) email stuff
+        6) perforce stuff
+        7) server stuff
+        8) scaling stuff
+
+        * uses of hooks : 
+        -> commit message formatting
+        -> package install
+        -> update ctags
+        -> submodule status
+        -> switch tabs to spaces
+        -> linting
+        -> restrictions on large files
+        -> test passes
+        -> rebasing merged commit prevention
+        
+         
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------     
     * Git ignore and markdown file
 
@@ -234,6 +290,21 @@
 
 -------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------     
+    # some other commands and topics of Git:
+        -> git maintenance start
+        -> git commit-graph
+        -> git prefetching
+        -> git config core.fsmonitor        (for filesystem monitor)
+        -> git clone --filter=blob:none <url-for-repo>          (partial cloning first commits, trees and then object blobs)
+                -> git clone --filter=tree:0 <url-for-reop>             (partial cloning first commits then trees and then blobs)
+        -> multipack indexes
+        -> reachability bitmaps
+        -> geometric repacking
+        -> sparse-checkout
+            
+-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------     
     * reference links : 
     -> git reference book : https://git-scm.com/book/en/v2
     -> for internal working of git :: https://www.youtube.com/watch?v=ZDR433b0HJY
+    -> for some new stuffs of 2023034 :: https://www.youtube.com/watch?v=aolI_Rz0ZqY
