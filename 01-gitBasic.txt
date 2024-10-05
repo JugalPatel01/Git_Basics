@@ -55,15 +55,24 @@
 
 -------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------        
-    * preparation before using git
+    * git config and other preparations before using git
     
-    -> setup username and email using following commands        
-        -> git config --global user.name "Jugal Patel"
-        -> git config --global user.email "jugalrpatel@gmail.com"
-    -> make more colorful ui for git terminal
-        -> git config --global color.ui true
     -> generate pair of private and public key ssh keys using `ssh-keygen -t rsa -b 4096` command and then put public key on the github or any other remote git repoistory account.
 
+    -> setup username and email :   
+                                : git config --global user.name "Jugal Patel"
+                                : git config --global user.email "jugalrpatel@gmail.com"
+    
+    -> make git terminal more colorful :
+                                       : git config --global color.ui true
+
+    -> give alias for complex git commands : eg. 
+                                           : git config --global alias.staash 'stash --all'
+    
+    -> run scripts using git commands : use `!` to run script eg.
+                                      : git config --global alias.runsc !run_this.sh  
+
+    
 -------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------        
 # Git basic command 
@@ -114,6 +123,8 @@
     -> git stash pop : it will bring back all the files which are stashed into unstaged area.
 
     -> git stash clear : it will clear all the files which are stashed before, we can't retrive those files back after we clear them from stash area.
+
+    -> git clean -f : it will delete untracked files(added in the working directory but not indexed(added in the staging area)) in working directory.
 
     -> git rebase -i <commit_hash> : it will give editor to squash unncessary commits in git history(log). 
 
